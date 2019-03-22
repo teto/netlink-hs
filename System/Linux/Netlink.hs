@@ -21,6 +21,8 @@ module System.Linux.Netlink
   , NoData(..)
   , NetlinkSocket
 
+  , bufferSize
+
   , getPacket
   , getAttributes
   , getHeader
