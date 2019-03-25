@@ -74,6 +74,11 @@ import System.Posix.Types (Fd(Fd))
 import qualified System.Linux.Netlink.C as C
 import System.Linux.Netlink.Helpers
 import System.Linux.Netlink.Constants
+import System.Log.FastLogger
+-- import System.Log.Simple
+
+
+-- logger = newFileLoggerSet defaultBufSize "./log.txt"
 
 --Generic protocol stuff
 
@@ -245,9 +250,15 @@ getError hdr = do
 -- | 'Get' the body of a packet (the 'Header' is already read from the buffer
 getGenPacketContent :: (Convertable a, Eq a, Show a) => Header -> Get (Packet a)
 getGenPacketContent hdr
+-- TODO add some logging
+  -- | messageType hdr == eNLMSG_MIN_TYPE >> return (DoneMsg hdr) -- reserved / not used
   | messageType hdr == eNLMSG_DONE  = skip 4 >> return (DoneMsg hdr)
   | messageType hdr == eNLMSG_ERROR = getError hdr
+  | messageType hdr == eNLMSG_NOOP = return (DoneMsg hdr)
+  | messageType hdr == eNLMSG_OVERRUN = return (DoneMsg hdr)  -- lost data
   | otherwise  = do
+      -- pushLogStr "ok"
+      toLogStr "ok"
       msg    <- getGet (messageType hdr)
       attrs  <- getAttributes
       return $ Packet hdr msg attrs
