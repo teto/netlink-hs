@@ -78,8 +78,12 @@ import System.Log.FastLogger
 -- (newStdoutLoggerSet, defaultBufSize)
 -- import System.Log.Simple
 
+import Debug.Trace
 
--- logger <- newFileLoggerSet defaultBufSize "./log.txt"
+
+createLogger :: IO LoggerSet
+createLogger = newStdoutLoggerSet defaultBufSize
+
 
 --Generic protocol stuff
 
@@ -257,9 +261,10 @@ getGenPacketContent hdr
   | messageType hdr == eNLMSG_OVERRUN = return (DoneMsg hdr)  -- lost data
   | otherwise  = do
 -- TODO add some logging
-      logger <- newStdoutLoggerSet defaultBufSize
+      -- logger <- createLogger
+      -- logger <- newStdoutLoggerSet defaultBufSize
       -- pushLogStr logger (toLogStr "ok")
-      msg    <- getGet (messageType hdr)
+      msg    <- trace "otherwise" ++ show (messageType hdr) $ getGet (messageType hdr)
       attrs  <- getAttributes
       return $ Packet hdr msg attrs
 
