@@ -75,10 +75,11 @@ import qualified System.Linux.Netlink.C as C
 import System.Linux.Netlink.Helpers
 import System.Linux.Netlink.Constants
 import System.Log.FastLogger
+-- (newStdoutLoggerSet, defaultBufSize)
 -- import System.Log.Simple
 
 
--- logger = newFileLoggerSet defaultBufSize "./log.txt"
+-- logger <- newFileLoggerSet defaultBufSize "./log.txt"
 
 --Generic protocol stuff
 
@@ -113,7 +114,7 @@ data Header = Header
 
 instance Show Header where
   show (Header t f s p) = 
-    "Type: " ++ show t ++ ", Flags: " ++ (show f) ++ ", Seq: " ++ show s ++ ", Pid: " ++ show p
+    "Type: " ++ show t ++ ", Flags: " ++ show f ++ ", Seq: " ++ show s ++ ", Pid: " ++ show p
 
 -- |Type used for netlink attributes
 type Attributes = Map Int ByteString
@@ -250,15 +251,14 @@ getError hdr = do
 -- | 'Get' the body of a packet (the 'Header' is already read from the buffer
 getGenPacketContent :: (Convertable a, Eq a, Show a) => Header -> Get (Packet a)
 getGenPacketContent hdr
--- TODO add some logging
-  -- | messageType hdr == eNLMSG_MIN_TYPE >> return (DoneMsg hdr) -- reserved / not used
   | messageType hdr == eNLMSG_DONE  = skip 4 >> return (DoneMsg hdr)
   | messageType hdr == eNLMSG_ERROR = getError hdr
   | messageType hdr == eNLMSG_NOOP = return (DoneMsg hdr)
   | messageType hdr == eNLMSG_OVERRUN = return (DoneMsg hdr)  -- lost data
   | otherwise  = do
-      -- pushLogStr "ok"
-      toLogStr "ok"
+-- TODO add some logging
+      logger <- newStdoutLoggerSet defaultBufSize
+      -- pushLogStr logger (toLogStr "ok")
       msg    <- getGet (messageType hdr)
       attrs  <- getAttributes
       return $ Packet hdr msg attrs
@@ -280,7 +280,7 @@ Variant of 'getPackets' that allows to handle single failed packets
 getPackets' :: (Convertable a, Eq a, Show a) => ByteString -> [Either String (Packet a)]
 getPackets' bytes = case runGetPartial getGenPacket bytes of
     Partial _ -> [Left "Too short input for last message =.="] -- We got a
-    Fail msg _ -> Left msg : []
+    Fail msg _ -> [Left msg]
     Done r bs -> Right r : getPackets' bs
 
 {- | Read all 'Packet's from a buffer
