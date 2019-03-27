@@ -264,7 +264,8 @@ getGenPacketContent hdr
       -- logger <- createLogger
       -- logger <- newStdoutLoggerSet defaultBufSize
       -- pushLogStr logger (toLogStr "ok")
-      msg    <- trace "otherwise" ++ show (messageType hdr) $ getGet (messageType hdr)
+      -- trace "otherwise" ++ show (messageType hdr) $
+      msg    <-  getGet (messageType hdr)
       attrs  <- getAttributes
       return $ Packet hdr msg attrs
 
