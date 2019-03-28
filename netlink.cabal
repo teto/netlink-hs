@@ -1,5 +1,5 @@
 Name:                netlink
-Version:             1.1.1.0
+Version:             1.1.1.1
 Synopsis:            Netlink communication for Haskell
 Description:         Library to comminicate with Linux kernel via Netlink
 Homepage:            https://github.com/Ongy/netlink-hs
@@ -13,6 +13,8 @@ Category:            System
 Build-type:          Simple
 Cabal-version:       >=1.10
 
+
+-- source-repository-package
 Source-repository head
   type:       git
   location:   https://github.com/Ongy/netlink-hs
