@@ -151,6 +151,8 @@ getRequestPacket fid cmd dump attrs =
 -- |queryOne for NL80211 (see 'System.Linux.Netlink.queryOne')
 queryOne :: NL80211Socket -> Word8 -> Bool -> Attributes -> IO NL80211Packet
 queryOne (NLS sock fid) cmd dump attrs = I.queryOne sock packet
+
+
   where packet = getRequestPacket fid cmd dump attrs
 
 -- |query for NL80211 (see 'System.Linux.Netlink.query')

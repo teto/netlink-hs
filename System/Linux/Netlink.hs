@@ -48,6 +48,7 @@ module System.Linux.Netlink
   , queryOne
   , recvOne
   , recvOne'
+  , recvMulti
   , showNLAttrs
   , showAttrs
   , showAttr
