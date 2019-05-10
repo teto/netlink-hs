@@ -1,4 +1,8 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? nixpkgs.haskell.packages.ghc864 }:
+{ 
+nixpkgs ? import <nixpkgs> {},
+# nixpkgs ? import https://raw.githubusercontent.com/Infinisil/all-hies/master/nixpkgs.nix {},
+compiler ? nixpkgs.haskell.packages.ghc864
+}:
 
 with nixpkgs;
 
@@ -39,6 +43,9 @@ compiler.shellFor {
     # check if it's still needed ?
     export HIE_HOOGLE_DATABASE="$NIX_GHC_LIBDIR/../../share/doc/hoogle/index.html"
     echo ${my_nvim}
+
+    echo "cabal configure"
+    echo "cabal build"
   '';
 }
 
