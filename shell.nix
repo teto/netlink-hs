@@ -3,7 +3,7 @@
 with nixpkgs;
 
 let
-  # ce sont ces dependences 
+  # ce sont ces dependences
   my_nvim = genNeovim [ haskellPackages.netlink ] nvimConfig;
 
 
@@ -23,12 +23,11 @@ compiler.shellFor {
   withHoogle = true;
   # haskellPackages.stack
   nativeBuildInputs = with compiler; [
-    hie
     cabal-install
     # haskellPackages.bytestring-conversion
     gutenhasktags
-    haskdogs # seems to build on hasktags/ recursively import things
-    hasktags
+    # haskdogs # seems to build on hasktags/ recursively import things
+    # hasktags
     # haskellPackages.nvim-hs
     # haskellPackages.nvim-hs-ghcid
 
