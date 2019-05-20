@@ -1,9 +1,10 @@
+Cabal-version:       2.2
 Name:                netlink
 Version:             1.1.1.1
 Synopsis:            Netlink communication for Haskell
 Description:         Library to comminicate with Linux kernel via Netlink
 Homepage:            https://github.com/Ongy/netlink-hs
-License:             BSD3
+License:             BSD-3-Clause
 License-file:        LICENSE
 Author:              David Anderson
 Maintainer:          Markus Ongyerth <ongy@ongy.net>
@@ -11,7 +12,6 @@ Copyright:           Google Inc. 2010
 Stability:           Alpha
 Category:            System
 Build-type:          Simple
-Cabal-version:       >=1.10
 
 Source-repository head
   type:       git
