@@ -1,7 +1,7 @@
 { 
 nixpkgs ? import <nixpkgs> {},
 # nixpkgs ? import https://raw.githubusercontent.com/Infinisil/all-hies/master/nixpkgs.nix {},
-compiler ? nixpkgs.haskell.packages.ghc864
+compiler ? nixpkgs.haskell.packages.ghc865
 }:
 
 with nixpkgs;
@@ -27,11 +27,13 @@ compiler.shellFor {
   withHoogle = true;
   # haskellPackages.stack
   nativeBuildInputs = with compiler; [
+    all-hies.versions.ghc865
+
     cabal-install
     # haskellPackages.bytestring-conversion
-    gutenhasktags
+    # gutenhasktags
     # haskdogs # seems to build on hasktags/ recursively import things
-    # hasktags
+    hasktags
     # haskellPackages.nvim-hs
     # haskellPackages.nvim-hs-ghcid
 
@@ -44,7 +46,7 @@ compiler.shellFor {
     export HIE_HOOGLE_DATABASE="$NIX_GHC_LIBDIR/../../share/doc/hoogle/index.html"
     echo ${my_nvim}
 
-    echo "cabal configure"
+    echo "cabal configure --enable-library-profiling"
     echo "cabal build"
   '';
 }
