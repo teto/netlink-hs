@@ -2,7 +2,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DefaultSignatures #-}
-
+{-# LANGUAGE FlexibleContexts #-}
 {-|
 Module      : System.Linux.Netlink
 Description : The base module for the netlink package
@@ -71,6 +71,7 @@ import Data.Bits (Bits, (.&.))
 import qualified Data.ByteString as BS (length)
 import Data.ByteString (ByteString)
 import Data.Map (Map, fromList, toList)
+import Data.Serialize
 import Data.Serialize.Get
 import Data.Serialize.Put
 import Data.Word (Word16, Word32)
@@ -98,21 +99,27 @@ class Convertable a where
 
   -- inspired by 
   -- https://github.com/bos/aeson/blob/master/Data/Aeson/Types/FromJSON.hs#L392-L393
-  default getGet :: (Generic a) => MessageType -> Get a
+  -- TODO use serialize instead
+  default getGet :: (Generic a, Serialize  a) => MessageType -> Get a
   getGet = genericGetGet
 
-  default getPut :: (Generic a) => a -> Put
+  default getPut :: (Generic a, Serialize a) => a -> Put
   getPut = genericGetPut
 
 -- | A configurable generic JSON decoder. This function applied to
 -- 'defaultOptions' is used as the default for 'parseJSON' when the
 -- type is an instance of 'Generic'.
-genericGetGet :: (Generic a) => MessageType -> Get a
-genericGetGet = error "toto"
+-- genericParseJSON https://github.com/Ongy/netlink-hs/compare/master...teto:master#diff-d6eb9674c6cc9e4760ab6df8fe63c6c8R102
+-- cereal http://hackage.haskell.org/package/cereal-0.5.8.1/docs/Data-Serialize.html#t:GSerializePut
+-- http://hackage.haskell.org/package/cereal-0.5.8.1/docs/Data-Serialize.html#t:GSerializePut
+-- class GSerializeGet f where
+-- gGet :: Get (f a)
+genericGetGet :: (Generic a, Serialize a) => MessageType -> Get a
+genericGetGet _ = get
 
+genericGetPut :: (Generic a, Serialize a) => a -> Put
+genericGetPut t = put t
 
-genericGetPut :: (Generic a) => a -> Put
-genericGetPut _ = undefined
 
 -- |Datatype to be used when there is no additional static header
 data NoData = NoData deriving (Show, Eq)
