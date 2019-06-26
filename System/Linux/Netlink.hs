@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DefaultSignatures #-}
 
 {-|
 Module      : System.Linux.Netlink
@@ -79,6 +80,7 @@ import System.Posix.Types (Fd(Fd))
 import qualified System.Linux.Netlink.C as C
 import System.Linux.Netlink.Helpers
 import System.Linux.Netlink.Constants
+import GHC.Generics
 
 --Generic protocol stuff
 
@@ -94,6 +96,23 @@ class Convertable a where
   getGet :: MessageType -> Get a -- ^get a 'Get' function for the static data
   getPut :: a -> Put -- ^get a 'Put' function for the static data
 
+  -- inspired by 
+  -- https://github.com/bos/aeson/blob/master/Data/Aeson/Types/FromJSON.hs#L392-L393
+  default getGet :: (Generic a) => MessageType -> Get a
+  getGet = genericGetGet
+
+  default getPut :: (Generic a) => a -> Put
+  getPut = genericGetPut
+
+-- | A configurable generic JSON decoder. This function applied to
+-- 'defaultOptions' is used as the default for 'parseJSON' when the
+-- type is an instance of 'Generic'.
+genericGetGet :: (Generic a) => MessageType -> Get a
+genericGetGet = error "toto"
+
+
+genericGetPut :: (Generic a) => a -> Put
+genericGetPut _ = undefined
 
 -- |Datatype to be used when there is no additional static header
 data NoData = NoData deriving (Show, Eq)
